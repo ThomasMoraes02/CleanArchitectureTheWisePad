@@ -1,18 +1,30 @@
 <?php 
 namespace CleanArchitecture\Entities\Note;
 
+use CleanArchitecture\Entities\User\User;
 use CleanArchitecture\Entities\Note\Title;
 
 class Note
 {
+    private User $user;
+
     private Title $title;
 
     private string $content;
 
-    public function __construct(Title $title, string $content)
+    public function __construct(User $user, Title $title, string $content)
     {
+        $this->user = $user;
         $this->title = $title;
         $this->content = $content;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
     }
 
     /**
