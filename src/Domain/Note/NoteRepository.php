@@ -1,9 +1,9 @@
 <?php 
-namespace CleanArchitecture\Entities\Note;
+namespace CleanArchitecture\Domain\Note;
 
-use CleanArchitecture\Entities\Note\Note;
-use CleanArchitecture\Entities\User\User;
-use CleanArchitecture\Entities\Note\Title;
+use CleanArchitecture\Domain\Email;
+use CleanArchitecture\Domain\Note\Note;
+use CleanArchitecture\Domain\Note\Title;
 
 interface NoteRepository
 {
@@ -14,6 +14,14 @@ interface NoteRepository
      * @return void
      */
     public function add(Note $note): void;
+
+    /**
+     * Find Note By Id
+     *
+     * @param string $id
+     * @return Note
+     */
+    public function findById(string $id): Note;
 
     /**
      * Find Note By Title
@@ -41,10 +49,12 @@ interface NoteRepository
     public function delete(string $id): void;
 
     /**
-     * Get All Notes From User
+     * Find All Notes From User
      *
-     * @param User $user
+     * @param Email $email
+     * @param integer $page
+     * @param integer $per_page
      * @return array
      */
-    public function getAllNotesFromUser(User $user): array;
+    public function findAllNotesFrom(Email $email, int $page = 0, int $per_page = 0): array;
 }

@@ -1,5 +1,5 @@
 <?php 
-namespace CleanArchitecture\Entities\Note;
+namespace CleanArchitecture\Domain\Note;
 
 use DomainException;
 

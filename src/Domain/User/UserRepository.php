@@ -1,7 +1,8 @@
 <?php 
 namespace CleanArchitecture\Entities\User;
 
-use CleanArchitecture\Entities\Email;
+use CleanArchitecture\Domain\Email;
+use CleanArchitecture\Domain\User\User;
 
 interface UserRepository
 {

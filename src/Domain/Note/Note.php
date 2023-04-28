@@ -1,8 +1,8 @@
 <?php 
-namespace CleanArchitecture\Entities\Note;
+namespace CleanArchitecture\Domain\Note;
 
-use CleanArchitecture\Entities\User\User;
-use CleanArchitecture\Entities\Note\Title;
+use CleanArchitecture\Domain\User\User;
+use CleanArchitecture\Domain\Note\Title;
 
 class Note
 {

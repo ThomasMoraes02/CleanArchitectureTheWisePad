@@ -1,8 +1,8 @@
 <?php 
-namespace CleanArchitecture\Entities\User;
+namespace CleanArchitecture\Domain\User;
 
-use CleanArchitecture\Entities\Email;
-use CleanArchitecture\Entities\Encoder;
+use CleanArchitecture\Domain\Email;
+use CleanArchitecture\Domain\Encoder;
 
 class User
 {
@@ -28,17 +28,17 @@ class User
     }
 
     /**
-     * @return string
+     * @return Email
      */
-    public function getEmail(): string
+    public function getEmail(): Email
     {
         return $this->email;
     }
 
     /**
-     * @return string
+     * @return Encoder
      */
-    public function getEncoder(): string
+    public function getEncoder(): Encoder
     {
         return $this->encoder;
     }
