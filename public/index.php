@@ -1,6 +1,7 @@
 <?php
 
 use CleanArchitecture\Application\Factories\Auth\MakeSigIn;
+use CleanArchitecture\Application\Factories\Auth\MakeSignUp;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
@@ -18,5 +19,6 @@ $app->get("/", function(Request $request, Response $response, array $args) {
 });
 
 $app->post("/sigin", MakeSigIn::class);
+$app->post("/signup", MakeSignUp::class);
 
 $app->run();
