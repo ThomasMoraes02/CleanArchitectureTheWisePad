@@ -7,6 +7,6 @@ class NoteNotFound extends Exception
 {
     public function __construct()
     {
-        parent::__construct("Not not found.");
+        parent::__construct("Nota não encontrada.");
     }
 }

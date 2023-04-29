@@ -38,11 +38,10 @@ class CustomAuthenticate implements AuthenticationService
             throw new InvalidArgumentException("Password is Invalid");
         }
 
-        $accessToken = $this->tokenManager->sign(["email" => $user->getEmail()]);
+        $accessToken = $this->tokenManager->sign(["email" => $user->getEmail()->__toString()]);
 
         return [
-            "accessToken" => $accessToken,
-            "email" => $user->getEmail()
+            "accessToken" => $accessToken
         ];
     }
 }

@@ -14,7 +14,7 @@ class MakeSigIn
 
     public function __construct(Container $container)
     {
-        $authenticationService = $container->get("AutheticationService");
+        $authenticationService = $container->get("AuthenticationService");
         $useCase = new SignIn($authenticationService);
         $this->controller = new SignInOperation($useCase);
     }

@@ -1,5 +1,6 @@
 <?php
 
+use CleanArchitecture\Application\Factories\Auth\MakeSigIn;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
@@ -15,5 +16,7 @@ $app->get("/", function(Request $request, Response $response, array $args) {
     ->withHeader("Cache-Control", "proxy-revalidate")
     ->withStatus(200);
 });
+
+$app->post("/sigin", MakeSigIn::class);
 
 $app->run();
