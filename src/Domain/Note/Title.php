@@ -21,9 +21,10 @@ class Title
     private function setTitle(string $title): void
     {
         $title = filter_var($title, FILTER_SANITIZE_SPECIAL_CHARS);
-        if(strlen($title) < 10) {
-            throw new DomainException("The title must contain at least 10 characters");
-        } 
+        if(strlen($title) < 5) {
+            throw new DomainException("The title must contain at least 5 characters");
+        }
+        $this->title = $title;
     }
 
     /**

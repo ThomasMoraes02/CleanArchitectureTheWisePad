@@ -16,6 +16,11 @@
             "CleanArchitecture\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "CleanArchitecture\\Test\\": "test/"
+        }
+    },
     "authors": [
         {
             "name": "Thomas Moraes",

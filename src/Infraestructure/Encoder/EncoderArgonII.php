@@ -5,11 +5,13 @@ use CleanArchitecture\Domain\Encoder;
 
 class EncoderArgonII implements Encoder
 {
-    private string $password;
+    private ?string $password;
 
-    public function __construct(string $password)
+    public function __construct(?string $password = null)
     {
-        $this->password = password_get_info($password)['algo'] ? $this->encode($password) : $password;
+        if(!is_null($password)) {
+            $this->password = empty(password_get_info($password)['algo']) ? $this->encode($password) : $password;
+        }
     }
 
     /**

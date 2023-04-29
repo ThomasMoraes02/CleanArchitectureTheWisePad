@@ -28,9 +28,9 @@ class Note
     }
 
     /**
-     * @return string
+     * @return Title
      */
-    public function getTitle(): string
+    public function getTitle(): Title
     {
         return $this->title;
     }
