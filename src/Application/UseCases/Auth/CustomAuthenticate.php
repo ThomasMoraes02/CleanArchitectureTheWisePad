@@ -1,10 +1,11 @@
 <?php 
 namespace CleanArchitecture\Application\UseCases\Auth;
 
+use InvalidArgumentException;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Encoder;
-use CleanArchitecture\Entities\User\UserRepository;
-use InvalidArgumentException;
+use CleanArchitecture\Domain\User\UserRepository;
+use CleanArchitecture\Application\UseCases\Auth\TokenManager;
 
 class CustomAuthenticate implements AuthenticationService
 {

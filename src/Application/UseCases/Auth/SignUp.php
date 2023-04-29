@@ -5,8 +5,8 @@ use InvalidArgumentException;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Encoder;
 use CleanArchitecture\Domain\User\User;
+use CleanArchitecture\Domain\User\UserRepository;
 use CleanArchitecture\Application\UseCases\UseCase;
-use CleanArchitecture\Entities\User\UserRepository;
 use CleanArchitecture\Application\Exceptions\UserNotFound;
 
 class SignUp implements UseCase

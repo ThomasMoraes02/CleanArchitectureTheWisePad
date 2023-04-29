@@ -1,13 +1,13 @@
 <?php 
 namespace CleanArchitecture\Application\UseCases\Note;
 
-use CleanArchitecture\Application\UseCases\UseCase;
+use DomainException;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Note\Note;
-use CleanArchitecture\Domain\Note\NoteRepository;
 use CleanArchitecture\Domain\Note\Title;
-use CleanArchitecture\Entities\User\UserRepository;
-use DomainException;
+use CleanArchitecture\Domain\Note\NoteRepository;
+use CleanArchitecture\Domain\User\UserRepository;
+use CleanArchitecture\Application\UseCases\UseCase;
 
 class CreateNote implements UseCase
 {

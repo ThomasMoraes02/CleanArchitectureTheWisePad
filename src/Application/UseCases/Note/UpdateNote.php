@@ -5,8 +5,8 @@ use DomainException;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Note\Note;
 use CleanArchitecture\Domain\Note\NoteRepository;
+use CleanArchitecture\Domain\User\UserRepository;
 use CleanArchitecture\Application\UseCases\UseCase;
-use CleanArchitecture\Entities\User\UserRepository;
 
 class UpdateNote implements UseCase
 {
