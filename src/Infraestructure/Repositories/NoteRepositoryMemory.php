@@ -7,6 +7,8 @@ use CleanArchitecture\Domain\Note\Note;
 use CleanArchitecture\Domain\Note\NoteRepository;
 use CleanArchitecture\Domain\Note\Title;
 
+use function DI\value;
+
 class NoteRepositoryMemory implements NoteRepository
 {
     private array $notes = [];
@@ -30,7 +32,7 @@ class NoteRepositoryMemory implements NoteRepository
      */
     public function findById(string $id): Note
     {
-        $note = array_filter($this->notes, fn($note) => $note === $id, ARRAY_FILTER_USE_KEY);
+        $note = array_filter($this->notes, fn($note) => $note == $id, ARRAY_FILTER_USE_KEY);
 
         if(empty($note)) {
             throw new NoteNotFound;
@@ -65,15 +67,15 @@ class NoteRepositoryMemory implements NoteRepository
      */
     public function update(string $id, array $data): void
     {
-        $note = array_filter($this->notes, fn($note) => $note === $id, ARRAY_FILTER_USE_KEY);
+        $note = array_filter($this->notes, fn($note) => $note == $id, ARRAY_FILTER_USE_KEY);
 
         if(empty($note)) {
             throw new NoteNotFound;
         }
 
         foreach($data as $key => $value) {
-            $setKey = "set" . ucfirst($key);
-            if(method_exists('Note', $setKey)) {
+            $setKey = "set" . $key;
+            if(method_exists(Note::class, $setKey)) {
                 $note[0]->$setKey($value);
             }
         }
@@ -87,7 +89,7 @@ class NoteRepositoryMemory implements NoteRepository
      */
     public function delete(string $id): void
     {
-        $note = array_filter($this->notes, fn($note) => $note === $id, ARRAY_FILTER_USE_KEY);
+        $note = array_filter($this->notes, fn($note) => $note == $id, ARRAY_FILTER_USE_KEY);
 
         if(empty($note)) {
             throw new NoteNotFound;

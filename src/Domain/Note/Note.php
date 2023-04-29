@@ -36,12 +36,12 @@ class Note
     }
 
     /**
-     * @param Title $title
+     * @param string $title
      * @return self
      */
-    public function setTitle(Title $title): self
+    public function setTitle(string $title): self
     {
-        $this->title = $title;
+        $this->title = new Title($title);
 
         return $this;
     }

@@ -1,5 +1,5 @@
 <?php 
-namespace CleanArchitecture\Entities\User;
+namespace CleanArchitecture\Domain\User;
 
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\User\User;

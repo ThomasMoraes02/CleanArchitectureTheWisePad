@@ -1,10 +1,10 @@
 <?php 
 namespace CleanArchitecture\Infraestructure\Repositories;
 
-use CleanArchitecture\Application\Exceptions\UserNotFound;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\User\User;
-use CleanArchitecture\Entities\User\UserRepository;
+use CleanArchitecture\Domain\User\UserRepository;
+use CleanArchitecture\Application\Exceptions\UserNotFound;
 
 class UserRepositoryMemory implements UserRepository
 {
