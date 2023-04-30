@@ -19,10 +19,7 @@ class MakeAuthenticateMiddleware
 
     public function __construct(Container $container)
     {
-        $tokenManager = $container->get("TokenManager");
-        $userRepository = $container->get("UserRepository");
-
-        $this->middleware = new Authentication($tokenManager, $userRepository);
+        $this->middleware = $container->get("Middleware");
     }
 
     public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler)

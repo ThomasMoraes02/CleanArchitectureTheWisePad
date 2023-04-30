@@ -1,5 +1,6 @@
 <?php
 
+use CleanArchitecture\Application\Middleware\Authentication;
 use CleanArchitecture\Application\UseCases\Auth\CustomAuthenticate;
 use CleanArchitecture\Infraestructure\Authentication\TokenJWT;
 use CleanArchitecture\Infraestructure\Encoder\EncoderArgonII;
@@ -16,6 +17,7 @@ $containerBuilder->addDefinitions([
     "NoteRepository" => create(NoteRepositoryMemory::class),
     "Encoder" => create(EncoderArgonII::class),
     "TokenManager" => create(TokenJWT::class),
-    "AuthenticationService" => create(CustomAuthenticate::class)->constructor(get("UserRepository"), get("Encoder"), get("TokenManager"))
+    "AuthenticationService" => create(CustomAuthenticate::class)->constructor(get("UserRepository"), get("Encoder"), get("TokenManager")),
+    "Middleware" => create(Authentication::class)->constructor(get("TokenManager"), get("UserRepository"))
 ]);
 return $containerBuilder->build();
