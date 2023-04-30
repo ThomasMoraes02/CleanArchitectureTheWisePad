@@ -3,8 +3,9 @@ namespace CleanArchitecture\Application\Middleware;
 
 use CleanArchitecture\Application\Helpers\HttpStatusHelper;
 use CleanArchitecture\Application\UseCases\Auth\TokenManager;
+use Exception;
 
-class Authentication
+class Authentication implements Middleware
 {
     use HttpStatusHelper;
 
@@ -18,12 +19,17 @@ class Authentication
     /**
      * Verify Access Token
      *
-     * @param string $accessToken
+     * @param array|object|string $requestMiddleware
      * @return boolean
+     * @throws Exception
      */
-    public function authenticate(string $accessToken): bool
+    public function authenticate($requestMiddleware): bool
     {
-        $accessToken = str_replace("Bearer ", "", $accessToken);
+        if(empty($requestMiddleware)) {
+            throw new Exception("Token de Autenticação precisa ser enviado.");
+        }
+
+        $accessToken = str_replace("Bearer ", "", $requestMiddleware);
         return $this->tokenManager->verify($accessToken);
     }
 }

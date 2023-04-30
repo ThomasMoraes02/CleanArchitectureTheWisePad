@@ -1,6 +1,7 @@
 <?php
 
 use CleanArchitecture\Application\Factories\Auth\{MakeSigIn, MakeSignUp};
+use CleanArchitecture\Application\Factories\Middleware\MakeAuthenticateMiddleware;
 use CleanArchitecture\Application\Factories\Note\{MakeCreateNote, MakeDeleteNote, MakeLoadNote, MakeUpdateNote};
 use Slim\Psr7\{Request, Response};
 use Slim\Routing\RouteCollectorProxy;
@@ -26,6 +27,6 @@ $app->group("/notes", function(RouteCollectorProxy $group) {
     $group->get("", MakeLoadNote::class);
     $group->put("/{id}", MakeUpdateNote::class);
     $group->delete("/{id}", MakeDeleteNote::class);
-});
+})->add(MakeAuthenticateMiddleware::class);
 
 $app->run();
