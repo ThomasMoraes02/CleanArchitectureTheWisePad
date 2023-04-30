@@ -35,10 +35,11 @@ class CustomAuthenticate implements AuthenticationService
         $password = $this->encoder->decode($authenticationParams['password'], $user->getEncoder());
 
         if(!$password) {
-            throw new InvalidArgumentException("Password is Invalid");
+            throw new InvalidArgumentException("Senha inválida");
         }
 
-        $accessToken = $this->tokenManager->sign(["email" => $user->getEmail()->__toString()]);
+        $id = $this->userRepository->getUserId($user);
+        $accessToken = $this->tokenManager->sign(["id" => $id]);
 
         return [
             "accessToken" => $accessToken

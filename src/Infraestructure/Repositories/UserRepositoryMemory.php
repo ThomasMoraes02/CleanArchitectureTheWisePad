@@ -36,7 +36,35 @@ class UserRepositoryMemory implements UserRepository
             throw new UserNotFound;
         }
 
-        return $user[0];
+        return current($user);
+    }
+
+    /**
+     * Find User By Id
+     *
+     * @param string $id
+     * @return User|null
+     */
+    public function findUserById(string $id): ?User
+    {
+        $user = array_filter($this->users, fn($user) => $this->getUserId($user) == $id);
+
+        if(empty($user)) {
+            return null;
+        }
+
+        return current($user);
+    }
+
+    /**
+     * Get User Id
+     *
+     * @param User $user
+     * @return string
+     */
+    public function getUserId(User $user): string
+    {
+        return key(array_filter($this->users, fn($user) => $user->getEmail()->__toString() == $user->getEmail()->__toString()));
     }
 
     /**

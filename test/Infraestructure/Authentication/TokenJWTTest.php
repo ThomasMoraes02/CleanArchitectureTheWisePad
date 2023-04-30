@@ -18,7 +18,8 @@ class TokenJWTTest extends TestCase
     {
         $token = new TokenJWT;
         $accessToken = $token->sign(["email" => "thomas@gmail.com"]);
+        $decode = $token->verify($accessToken);
 
-        $this->assertTrue((new TokenJWT)->verify($accessToken));
+        $this->assertEquals("thomas@gmail.com", $decode->payload->email);
     }
 }

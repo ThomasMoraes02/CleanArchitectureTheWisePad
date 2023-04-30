@@ -10,8 +10,8 @@ interface TokenManager
     public function sign(array $payload): string;
 
     /**
-     * @param string $token
-     * @return boolean
+     * @param string $payload
+     * @return array|object|bool
      */
-    public function verify(string $token): bool;
+    public function verify(string $payload);
 }

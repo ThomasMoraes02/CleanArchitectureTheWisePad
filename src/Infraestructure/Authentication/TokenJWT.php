@@ -21,7 +21,7 @@ class TokenJWT implements TokenManager
         $payloadJWT = [
             "iss" => "secret-token-api-2023",
             "exp" => $expires,
-            "name" => $payload,
+            "payload" => $payload,
             "role" => "user"
         ];
 
@@ -32,18 +32,10 @@ class TokenJWT implements TokenManager
      * Decode and Verify Access Token JWT
      *
      * @param string $token
-     * @return boolean
+     * @return array|object|bool
      */
-    public function verify(string $token): bool
+    public function verify(string $token)
     {
-        $decode = JWT::decode($token, new Key("secret-token-api-2023", "HS256"));
-        
-        $expires = new DateTime(date("Y-m-d", $decode->exp));
-        $interval = $expires->diff(new DateTime());
-
-        if($interval->days > 1) {
-            return false;
-        }
-        return true;
+        return JWT::decode($token, new Key("secret-token-api-2023", "HS256"));
     }
 }

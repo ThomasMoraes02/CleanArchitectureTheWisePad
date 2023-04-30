@@ -1,9 +1,11 @@
 <?php 
 namespace CleanArchitecture\Application\Middleware;
 
+use DateTime;
+use Exception;
 use CleanArchitecture\Application\Helpers\HttpStatusHelper;
 use CleanArchitecture\Application\UseCases\Auth\TokenManager;
-use Exception;
+use CleanArchitecture\Domain\User\UserRepository;
 
 class Authentication implements Middleware
 {
@@ -11,9 +13,12 @@ class Authentication implements Middleware
 
     private TokenManager $tokenManager;
 
-    public function __construct(TokenManager $tokenManager)
+    private UserRepository $userRepository;
+
+    public function __construct(TokenManager $tokenManager, UserRepository $userRepository)
     {
         $this->tokenManager = $tokenManager;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -30,6 +35,21 @@ class Authentication implements Middleware
         }
 
         $accessToken = str_replace("Bearer ", "", $requestMiddleware);
-        return $this->tokenManager->verify($accessToken);
+        $decode = $this->tokenManager->verify($accessToken);
+
+        $expires = new DateTime(date("Y-m-d", $decode->exp));
+        $interval = $expires->diff(new DateTime());
+
+        if($interval->days > 1) {
+            throw new Exception("Token Expirado");
+        }
+
+        $user = $this->userRepository->findUserById($decode->payload->id);
+
+        if(is_null($user)) {
+            throw new Exception("Usuário inválido");
+        }
+
+        return true;
     }
 }
