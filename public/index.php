@@ -2,8 +2,10 @@
 
 use CleanArchitecture\Application\Factories\Auth\MakeSigIn;
 use CleanArchitecture\Application\Factories\Auth\MakeSignUp;
+use CleanArchitecture\Application\Factories\Note\MakeCreateNote;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
+use Slim\Routing\RouteCollectorProxy;
 
 require_once __DIR__ . "/../config/bootstrap.php";
 
@@ -20,5 +22,9 @@ $app->get("/", function(Request $request, Response $response, array $args) {
 
 $app->post("/sigin", MakeSigIn::class);
 $app->post("/signup", MakeSignUp::class);
+
+$app->group("/notes", function(RouteCollectorProxy $group) {
+    $group->post("", MakeCreateNote::class);
+});
 
 $app->run();

@@ -109,11 +109,6 @@ class NoteRepositoryMemory implements NoteRepository
     public function findAllNotesFrom(Email $email, int $page = 0, int $per_page = 0): array
     {
         $notes = array_filter($this->notes, fn($note) => $note->getUser()->getEmail() === $email);
-
-        if(empty($notes)) {
-            throw new NoteNotFound;
-        }
-
         return $notes;
     }
 }

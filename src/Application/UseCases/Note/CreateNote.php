@@ -34,13 +34,14 @@ class CreateNote implements UseCase
         $note = new Note($user, new Title($request['title']), $request['content']);
 
         $userNotes = $this->noteRepository->findAllNotesFrom(new Email($request['email']));
-
-        $this->findNoteByTitle($note->getTitle(), $userNotes);
+        if(!empty($userNotes)) {
+            $this->findNoteByTitle($note->getTitle(), $userNotes);
+        }
 
         $this->noteRepository->add($note);
 
         return [
-            "title" => $note->getTitle(),
+            "title" => $note->getTitle()->__toString(),
             "content" => $note->getContent()
         ];
     }
