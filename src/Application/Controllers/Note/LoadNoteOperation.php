@@ -11,6 +11,7 @@ class LoadNoteOperation extends ControllerOperation
 
     public function __construct(UseCase $useCase)
     {
+        parent::$requiredFields = ["email"];
         $this->useCase = $useCase;
     }
 
@@ -23,6 +24,7 @@ class LoadNoteOperation extends ControllerOperation
     public function handle(array $request): array
     {
         try {
+            ControllerOperation::getMissingParams($request);
             $response = $this->useCase->execute($request);
             return $this->ok($response);
         } catch(Throwable $e) {

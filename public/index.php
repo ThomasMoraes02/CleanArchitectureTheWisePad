@@ -3,6 +3,7 @@
 use CleanArchitecture\Application\Factories\Auth\MakeSigIn;
 use CleanArchitecture\Application\Factories\Auth\MakeSignUp;
 use CleanArchitecture\Application\Factories\Note\MakeCreateNote;
+use CleanArchitecture\Application\Factories\Note\MakeLoadNote;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use Slim\Routing\RouteCollectorProxy;
@@ -25,6 +26,7 @@ $app->post("/signup", MakeSignUp::class);
 
 $app->group("/notes", function(RouteCollectorProxy $group) {
     $group->post("", MakeCreateNote::class);
+    $group->get("", MakeLoadNote::class);
 });
 
 $app->run();

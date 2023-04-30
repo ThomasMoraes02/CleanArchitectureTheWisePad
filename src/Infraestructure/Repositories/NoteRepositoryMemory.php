@@ -6,12 +6,23 @@ use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Note\Note;
 use CleanArchitecture\Domain\Note\NoteRepository;
 use CleanArchitecture\Domain\Note\Title;
+use CleanArchitecture\Domain\User\User;
+use CleanArchitecture\Infraestructure\Encoder\EncoderArgonII;
 
-use function DI\value;
 
 class NoteRepositoryMemory implements NoteRepository
 {
     private array $notes = [];
+
+    public function __construct()
+    {
+        $user = new User("Thomas Moraes", new Email("thomas@gmail.com"), new EncoderArgonII("123456"));
+        $note = new Note($user, new Title("Titulo 1"), "conteudo 1");
+        $note2 = new Note($user, new Title("Titulo 2"), "conteudo 2");
+
+        $this->add($note);
+        $this->add($note2);
+    }
 
     /**
      * Add Note to Repository
@@ -108,7 +119,30 @@ class NoteRepositoryMemory implements NoteRepository
      */
     public function findAllNotesFrom(Email $email, int $page = 0, int $per_page = 0): array
     {
-        $notes = array_filter($this->notes, fn($note) => $note->getUser()->getEmail() === $email);
-        return $notes;
+        $notes = array_filter($this->notes, fn($note) => $note->getUser()->getEmail()->__toString() == $email);
+
+        return $this->map($notes);
+    }
+
+    /**
+     * Mapping Note Array
+     *
+     * @param array $notes
+     * @return array
+     */
+    private function map(array $notes): array
+    {
+        $allNotes = [];
+
+        /** @var Note $note */
+        foreach($notes as $noteKey => $note) {
+            $allNotes[] = [
+                "id" => $noteKey,
+                "title" => $note->getTitle()->__toString(),
+                "content" => $note->getContent()
+            ];
+        }
+
+        return $allNotes;
     }
 }
