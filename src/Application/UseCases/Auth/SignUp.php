@@ -29,10 +29,10 @@ class SignUp implements UseCase
         try {
             $user = $this->userRepository->findByEmail(new Email($request['email']));
 
-            $userPassword = $this->encoder->decode($request['password'], $user->getEncoder());
+            $userPassword = $this->encoder->decode($request['password'], $user->getEncoder()->__toString());
     
             if(!$userPassword) {
-                throw new InvalidArgumentException("Password Invalid");
+                throw new InvalidArgumentException("Senha inválida");
             }
         } catch(UserNotFound $e) {
             $user = new User($request['name'], new Email($request['email']), new $this->encoder($request['password']));

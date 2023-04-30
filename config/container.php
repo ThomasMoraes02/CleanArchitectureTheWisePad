@@ -6,6 +6,7 @@ use CleanArchitecture\Infraestructure\Authentication\TokenJWT;
 use CleanArchitecture\Infraestructure\Encoder\EncoderArgonII;
 use CleanArchitecture\Infraestructure\Repositories\NoteRepositoryMemory;
 use CleanArchitecture\Infraestructure\Repositories\UserRepositoryMemory;
+use CleanArchitecture\Infraestructure\Repositories\UserRepositoryMongodb;
 use DI\ContainerBuilder;
 
 use function DI\create;
@@ -13,7 +14,7 @@ use function DI\get;
 
 $containerBuilder = new ContainerBuilder();
 $containerBuilder->addDefinitions([
-    "UserRepository" => create(UserRepositoryMemory::class),
+    "UserRepository" => create(UserRepositoryMongodb::class)->constructor(get("Encoder")),
     "NoteRepository" => create(NoteRepositoryMemory::class),
     "Encoder" => create(EncoderArgonII::class),
     "TokenManager" => create(TokenJWT::class),

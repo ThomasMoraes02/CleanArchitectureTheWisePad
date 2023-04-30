@@ -31,8 +31,8 @@ class CustomAuthenticate implements AuthenticationService
     public function auth(array $authenticationParams): array
     {
         $user = $this->userRepository->findByEmail(new Email($authenticationParams['email']));
-
-        $password = $this->encoder->decode($authenticationParams['password'], $user->getEncoder());
+        
+        $password = $this->encoder->decode($authenticationParams['password'], $user->getEncoder()->__toString());
 
         if(!$password) {
             throw new InvalidArgumentException("Senha inválida");
