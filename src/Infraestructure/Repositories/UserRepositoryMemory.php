@@ -11,12 +11,6 @@ class UserRepositoryMemory implements UserRepository
 {
     private array $users = [];
 
-    public function __construct()
-    {
-        $user = new User("Thomas Moraes", new Email("thomas@gmail.com"), new EncoderArgonII("123456"));
-        $this->users[] = $user;
-    }
-
     /**
      * Add User to Repository
      *

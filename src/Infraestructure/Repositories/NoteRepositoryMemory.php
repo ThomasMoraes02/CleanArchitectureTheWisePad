@@ -14,16 +14,6 @@ class NoteRepositoryMemory implements NoteRepository
 {
     private array $notes = [];
 
-    public function __construct()
-    {
-        $user = new User("Thomas Moraes", new Email("thomas@gmail.com"), new EncoderArgonII("123456"));
-        $note = new Note($user, new Title("Titulo 1"), "conteudo 1");
-        $note2 = new Note($user, new Title("Titulo 2"), "conteudo 2");
-
-        $this->add($note);
-        $this->add($note2);
-    }
-
     /**
      * Add Note to Repository
      *
