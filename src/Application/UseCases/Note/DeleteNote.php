@@ -24,7 +24,7 @@ class DeleteNote implements UseCase
         $this->noteRepository->delete($request['id']);
 
         return [
-            "message" => "Note deleted"
+            "message" => "Nota Deletada"
         ];
     }
 }

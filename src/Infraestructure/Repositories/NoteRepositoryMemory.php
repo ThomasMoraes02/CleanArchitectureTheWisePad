@@ -49,7 +49,7 @@ class NoteRepositoryMemory implements NoteRepository
             throw new NoteNotFound;
         }
 
-        return $note[0];
+        return current($note);
     }
 
     /**
@@ -66,7 +66,7 @@ class NoteRepositoryMemory implements NoteRepository
             throw new NoteNotFound;
         }
 
-        return $note[0];
+        return current($note);
     }
 
     /**
@@ -79,15 +79,16 @@ class NoteRepositoryMemory implements NoteRepository
     public function update(string $id, array $data): void
     {
         $note = array_filter($this->notes, fn($note) => $note == $id, ARRAY_FILTER_USE_KEY);
+        $note = reset($note);
 
         if(empty($note)) {
             throw new NoteNotFound;
         }
 
         foreach($data as $key => $value) {
-            $setKey = "set" . $key;
+            $setKey = "set" . ucfirst($key);
             if(method_exists(Note::class, $setKey)) {
-                $note[0]->$setKey($value);
+                $note->$setKey($value);
             }
         }
     }

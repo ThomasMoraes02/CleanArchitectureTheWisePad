@@ -11,6 +11,7 @@ class UpdateNoteOperation extends ControllerOperation
 
     public function __construct(UseCase $useCase)
     {
+        parent::$requiredFields = ["id"];
         $this->useCase = $useCase;
     }
 

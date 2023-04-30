@@ -1,12 +1,8 @@
 <?php
 
-use CleanArchitecture\Application\Factories\Auth\MakeSigIn;
-use CleanArchitecture\Application\Factories\Auth\MakeSignUp;
-use CleanArchitecture\Application\Factories\Note\MakeCreateNote;
-use CleanArchitecture\Application\Factories\Note\MakeDeleteNote;
-use CleanArchitecture\Application\Factories\Note\MakeLoadNote;
-use Slim\Psr7\Request;
-use Slim\Psr7\Response;
+use CleanArchitecture\Application\Factories\Auth\{MakeSigIn, MakeSignUp};
+use CleanArchitecture\Application\Factories\Note\{MakeCreateNote, MakeDeleteNote, MakeLoadNote, MakeUpdateNote};
+use Slim\Psr7\{Request, Response};
 use Slim\Routing\RouteCollectorProxy;
 
 require_once __DIR__ . "/../config/bootstrap.php";
@@ -28,6 +24,7 @@ $app->post("/signup", MakeSignUp::class);
 $app->group("/notes", function(RouteCollectorProxy $group) {
     $group->post("", MakeCreateNote::class);
     $group->get("", MakeLoadNote::class);
+    $group->put("/{id}", MakeUpdateNote::class);
     $group->delete("/{id}", MakeDeleteNote::class);
 });
 

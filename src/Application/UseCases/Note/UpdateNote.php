@@ -31,12 +31,12 @@ class UpdateNote implements UseCase
         $user = $this->userRepository->findByEmail(new Email($request['email']));
         $note = $this->noteRepository->findById($request['id']);
 
-        if($user->getEmail() === $note->getUser()->getEmail()) {
-            throw new DomainException("The note is not from this user.");
+        if($user->getEmail() != $note->getUser()->getEmail()) {
+            throw new DomainException("Essa nota não pertence a este usuário.");
         }
 
-        if(!$this->verifyTitleAlreadyExists($note)) {
-            throw new DomainException("Title already exists: {$request['title']}");
+        if(!$this->verifyTitleAlreadyExists($note, $request['title'])) {
+            throw new DomainException("Titulo já existe: {$request['title']}");
         }
 
         $this->noteRepository->update($request['id'], $request);
@@ -52,13 +52,14 @@ class UpdateNote implements UseCase
      * Verify Title Already Exists
      *
      * @param Note $note
+     * @param string $title
      * @return boolean
      */
-    private function verifyTitleAlreadyExists(Note $note): bool
+    private function verifyTitleAlreadyExists(Note $note, string $title): bool
     {
         $userNotes = $this->noteRepository->findAllNotesFrom($note->getUser()->getEmail());
 
-        $noteAlreadyExists = array_filter($userNotes, fn($userNote) => $userNote->getTitle() === $note->getTitle());
+        $noteAlreadyExists = array_filter($userNotes, fn($userNote) => $userNote["title"] == $title);
         if(!empty($noteAlreadyExists)) {
             return false;
         }

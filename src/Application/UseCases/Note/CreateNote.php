@@ -57,7 +57,7 @@ class CreateNote implements UseCase
     private function findNoteByTitle(string $title, array $userNotes): void
     {
         if(!empty($userNotes)) {
-            $note = array_filter($userNotes, fn($userNote) => $userNote->getTitle() == $title);
+            $note = array_filter($userNotes, fn($userNote) => $userNote['title'] == $title);
             if(!empty($note)) {
                 throw new DomainException("Note already exists: {$title}");
             }
