@@ -9,12 +9,14 @@ use CleanArchitecture\Domain\User\User;
 use MongoDB\Operation\FindOneAndUpdate;
 use CleanArchitecture\Domain\User\UserRepository;
 use CleanArchitecture\Application\Exceptions\UserNotFound;
+use CleanArchitecture\Infraestructure\Repositories\MongoDB\MongoDb;
+use MongoDB\Database;
 
 class UserRepositoryMongodb implements UserRepository
 {
-    private $client;
+    private Database $client;
 
-    private Collection $userClient;
+    private Collection $userCollection;
 
     private string $collection = "users";
 
@@ -24,7 +26,7 @@ class UserRepositoryMongodb implements UserRepository
     {
         $this->encoder = $encoder;
         $this->client = (new Client())->selectDatabase("thewisepad");
-        $this->userClient = $this->client->selectCollection($this->collection);
+        $this->userCollection = $this->client->selectCollection($this->collection);
     }
 
     public function add(User $user): void
@@ -38,12 +40,12 @@ class UserRepositoryMongodb implements UserRepository
             "password" => $user->getEncoder()->__toString()
         ];
 
-        $this->userClient->insertOne($document);
+        $this->userCollection->insertOne($document);
     }
 
     public function findByEmail(Email $email): User
     {
-        $findUser = $this->userClient->find(['email' => $email->__toString()])->toArray();
+        $findUser = $this->userCollection->find(['email' => $email->__toString()])->toArray();
         $findUser = current($findUser);
 
         if(empty($findUser)) {
@@ -56,7 +58,7 @@ class UserRepositoryMongodb implements UserRepository
 
     public function findUserById(string $id): ?User
     {
-        $findUser = $this->userClient->find(['_id' => $id])->toArray();
+        $findUser = $this->userCollection->find(['_id' => $id])->toArray();
         $findUser = current($findUser);
 
         if(empty($findUser)) {
@@ -69,7 +71,7 @@ class UserRepositoryMongodb implements UserRepository
 
     public function getUserId(User $user): string
     {
-        $findUser = $this->userClient->find(['email' => $user->getEmail()->__toString()])->toArray();
+        $findUser = $this->userCollection->find(['email' => $user->getEmail()->__toString()])->toArray();
         $findUser = current($findUser);
 
         if(empty($findUser)) {
@@ -81,7 +83,7 @@ class UserRepositoryMongodb implements UserRepository
 
     public function getAll(): array
     {
-        $users = $this->userClient->find()->toArray();
+        $users = $this->userCollection->find()->toArray();
         return $users;
     }
 
