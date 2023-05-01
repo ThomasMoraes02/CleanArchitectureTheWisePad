@@ -16,16 +16,16 @@ class TokenJWT implements TokenManager
      */
     public function sign(array $payload): string
     {
-        $expires = time() + 60 * 60 * 24 * 1;
+        $expires = time() + 60 * 60 * 24 * AUTH_EXPIRATION_TOKEN;
         
         $payloadJWT = [
-            "iss" => "secret-token-api-2023",
+            "iss" => AUTH_SECRET_KEY,
             "exp" => $expires,
             "payload" => $payload,
             "role" => "user"
         ];
 
-        return JWT::encode($payloadJWT, "secret-token-api-2023", "HS256");
+        return JWT::encode($payloadJWT, AUTH_SECRET_KEY, AUTH_ALGORITHM);
     }
 
     /**
@@ -36,6 +36,6 @@ class TokenJWT implements TokenManager
      */
     public function verify(string $token)
     {
-        return JWT::decode($token, new Key("secret-token-api-2023", "HS256"));
+        return JWT::decode($token, new Key(AUTH_SECRET_KEY, AUTH_ALGORITHM));
     }
 }
