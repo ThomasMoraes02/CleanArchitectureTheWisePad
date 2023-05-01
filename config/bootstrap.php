@@ -8,3 +8,5 @@ $container = require_once __DIR__ . "/container.php";
 
 AppFactory::setContainer($container);
 $app = AppFactory::create();
+
+$app->addErrorMiddleware(true, false, false);

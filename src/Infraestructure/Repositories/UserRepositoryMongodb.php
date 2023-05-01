@@ -66,7 +66,7 @@ class UserRepositoryMongodb implements UserRepository
         }
 
         $encoder = $this->encoder;
-        return new User($findUser['name'], new Email($findUser['email']), $encoder($findUser['password']));
+        return new User($findUser['name'], new Email($findUser['email']), new $encoder($findUser['password']));
     }
 
     public function getUserId(User $user): string
@@ -94,7 +94,7 @@ class UserRepositoryMongodb implements UserRepository
      */
     private function getNextId(): string
     {
-        $counters = $this->client->selectCollection("counters");
+        $counters = $this->client->selectCollection("users_counters");
 
         $result = $counters->findOneAndUpdate(
             ["_id", "id"],
