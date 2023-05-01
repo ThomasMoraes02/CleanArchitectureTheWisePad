@@ -15,14 +15,16 @@ class MakeDeleteNote
     public function __construct(Container $container)
     {
         $noteRepository = $container->get("NoteRepository");
+        $userRepository = $container->get("UserRepository");
 
-        $useCase = new DeleteNote($noteRepository);
+        $useCase = new DeleteNote($noteRepository, $userRepository);
         $this->controller = new DeleteNoteOperation($useCase);
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
         $payload["id"] = $args["id"];
+        $payload['user_id'] = $request->getAttribute("user_id");
         $responseController = $this->controller->handle($payload);
 
         $response->getBody()->write(json_encode($responseController));

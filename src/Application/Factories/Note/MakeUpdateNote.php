@@ -25,6 +25,7 @@ class MakeUpdateNote
     {
         $payload = json_decode($request->getBody(), true);
         $payload['id'] = $args['id'];
+        $payload['user_id'] = $request->getAttribute("user_id");
         $responseController = $this->controller->handle($payload);
 
         $response->getBody()->write(json_encode($responseController));

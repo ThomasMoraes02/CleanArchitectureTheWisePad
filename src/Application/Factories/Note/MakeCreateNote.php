@@ -24,6 +24,7 @@ class MakeCreateNote
     public function __invoke(Request $request, Response $response, array $args): Response
     {
         $payload = json_decode($request->getBody(), true);
+        $payload['user_id'] = $request->getAttribute("user_id");
         $responseController = $this->controller->handle($payload);
 
         $response->getBody()->write(json_encode($responseController));

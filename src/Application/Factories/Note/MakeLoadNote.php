@@ -17,7 +17,7 @@ class MakeLoadNote
         $noteRepository = $container->get("NoteRepository");
         $userRepository = $container->get("UserRepository");
 
-        $useCase = new LoadNote($noteRepository);
+        $useCase = new LoadNote($noteRepository, $userRepository);
         $this->controller = new LoadNoteOperation($useCase);
     }
 

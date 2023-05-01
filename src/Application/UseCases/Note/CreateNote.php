@@ -8,6 +8,7 @@ use CleanArchitecture\Domain\Note\Title;
 use CleanArchitecture\Domain\Note\NoteRepository;
 use CleanArchitecture\Domain\User\UserRepository;
 use CleanArchitecture\Application\UseCases\UseCase;
+use Exception;
 
 class CreateNote implements UseCase
 {
@@ -29,7 +30,12 @@ class CreateNote implements UseCase
      */
     public function execute(array $request): array
     {
+        $userAuth = $this->userRepository->findUserById($request['user_id']);
         $user = $this->userRepository->findByEmail(new Email($request['email']));
+
+        if($userAuth->getEmail() != $user->getEmail()) {
+            throw new Exception("Permissão negada a este recurso");
+        }
 
         $note = new Note($user, new Title($request['title']), $request['content']);
 

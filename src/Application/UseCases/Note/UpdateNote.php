@@ -1,6 +1,7 @@
 <?php 
 namespace CleanArchitecture\Application\UseCases\Note;
 
+use Exception;
 use DomainException;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Note\Note;
@@ -28,15 +29,24 @@ class UpdateNote implements UseCase
      */
     public function execute(array $request): array
     {
+        $userAuth = $this->userRepository->findUserById($request['user_id']);
         $user = $this->userRepository->findByEmail(new Email($request['email']));
+
+        if($userAuth->getEmail() != $user->getEmail()) {
+            throw new Exception("Permissão negada a este recurso");
+        }
+
         $note = $this->noteRepository->findById($request['id']);
 
         if($user->getEmail() != $note->getUser()->getEmail()) {
             throw new DomainException("Essa nota não pertence a este usuário.");
         }
 
-        if(!empty($request['title']) && !$this->verifyTitleAlreadyExists($note, $request['title'])) {
-            throw new DomainException("Titulo já existe: {$request['title']}");
+        $noteAlreadyExists = $this->verifyTitleAlreadyExists($note, $request['title']);
+        if(!empty($request['title']) && !is_null($noteAlreadyExists)) {
+            if($request['id'] != $noteAlreadyExists) {
+                throw new DomainException("Titulo já existe: {$request['title']}");
+            }
         }
 
         $this->noteRepository->update($request['id'], $request);
@@ -55,17 +65,17 @@ class UpdateNote implements UseCase
      *
      * @param Note $note
      * @param string $title
-     * @return boolean
+     * @return ?string
      */
-    private function verifyTitleAlreadyExists(Note $note, string $title): bool
+    private function verifyTitleAlreadyExists(Note $note, string $title): ?string
     {
         $userNotes = $this->noteRepository->findAllNotesFrom($note->getUser()->getEmail());
 
-        $noteAlreadyExists = array_filter($userNotes, fn($userNote) => $userNote["title"] == $title);
+        $noteAlreadyExists = array_filter($userNotes, fn($userNote) => $userNote["title"] == $title);;
         if(!empty($noteAlreadyExists)) {
-            return false;
+            return current($noteAlreadyExists)['id'];
         }
 
-        return true;
+        return null;
     }
 }
