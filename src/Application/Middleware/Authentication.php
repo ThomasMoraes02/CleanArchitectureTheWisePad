@@ -23,12 +23,13 @@ class Authentication implements Middleware
 
     /**
      * Verify Access Token
+     * Return User Id Access Token
      *
      * @param array|object|string $requestMiddleware
-     * @return boolean
+     * @return string
      * @throws Exception
      */
-    public function authenticate($requestMiddleware): bool
+    public function authenticate($requestMiddleware): string
     {
         if(empty($requestMiddleware)) {
             throw new Exception("Token de Autenticação precisa ser enviado.");
@@ -54,6 +55,6 @@ class Authentication implements Middleware
             throw new Exception("Usuário inválido");
         }
 
-        return true;
+        return $decode->payload->id;
     }
 }

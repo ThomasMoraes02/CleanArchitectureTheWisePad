@@ -31,6 +31,8 @@ class MakeLoadNote
         $payload['page'] = $params['page'] ?? null;
         $payload['limit'] = $params['limit'] ?? null;
 
+        $payload['user_id'] = $request->getAttribute("user_id");
+
         $responseController = $this->controller->handle($payload);
 
         $response->getBody()->write(json_encode($responseController));

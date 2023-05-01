@@ -7,7 +7,7 @@ interface Middleware
      * Authenticate Middleware
      *
      * @param string|array|mixed|object $requestMiddleware
-     * @return boolean
+     * @return string
      */
-    public function authenticate($requestMiddleware): bool;
+    public function authenticate($requestMiddleware): string;
 }

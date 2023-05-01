@@ -9,6 +9,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use CleanArchitecture\Application\Middleware\Authentication;
 use CleanArchitecture\Application\Middleware\Middleware;
 use Exception;
+use Slim\Psr7\Request;
 use Throwable;
 
 class MakeAuthenticateMiddleware
@@ -22,16 +23,18 @@ class MakeAuthenticateMiddleware
         $this->middleware = $container->get("Middleware");
     }
 
-    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function __invoke(Request $request, RequestHandlerInterface $handler)
     {
         try {
             $token = $request->getHeader("Authorization");    
-            $responseOperation = $this->middleware->authenticate(current($token));
+            $user_id = $this->middleware->authenticate(current($token));
     
-            if(!$responseOperation) {
+            if(!$user_id) {
                 throw new Exception("Token Inválido");
             }
-        
+
+            $request = $request->withAttribute("user_id",$user_id);
+
             $response = $handler->handle($request);
             return $response;
         } catch(Throwable $e) {

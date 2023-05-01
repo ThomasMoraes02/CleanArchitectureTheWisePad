@@ -33,7 +33,7 @@ abstract class ControllerOperation
         }
     
         if(!empty($missingParams)) {
-            throw new InvalidArgumentException("Missing parameters: " . implode(", ", $missingParams));
+            throw new InvalidArgumentException("Campos obrigatórios: " . implode(", ", $missingParams));
         }
     }
 }
