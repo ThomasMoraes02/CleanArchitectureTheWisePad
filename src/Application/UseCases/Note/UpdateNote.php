@@ -35,16 +35,18 @@ class UpdateNote implements UseCase
             throw new DomainException("Essa nota não pertence a este usuário.");
         }
 
-        if(!$this->verifyTitleAlreadyExists($note, $request['title'])) {
+        if(!empty($request['title']) && !$this->verifyTitleAlreadyExists($note, $request['title'])) {
             throw new DomainException("Titulo já existe: {$request['title']}");
         }
 
         $this->noteRepository->update($request['id'], $request);
 
+        $note = $this->noteRepository->findById($request['id']);
+
         return [
             "id" => $request['id'],
-            "title" => $request['title'],
-            "content" => $request['content']
+            "title" => $note->getTitle()->__toString(),
+            "content" => $note->getContent()
         ];
     }
 

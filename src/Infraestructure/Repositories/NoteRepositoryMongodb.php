@@ -34,7 +34,7 @@ class NoteRepositoryMongodb implements NoteRepository
         $id = $this->getNextId();
 
         $document = [
-            "_id" => $id,
+            "id" => $id,
             "title" => $note->getTitle()->__toString(),
             "content" => $note->getContent(),
             "user_email" => $note->getUser()->getEmail()->__toString()
@@ -45,11 +45,11 @@ class NoteRepositoryMongodb implements NoteRepository
 
     public function findById(string $id): Note
     {
-        $note = $this->noteCollection->find(['_id' => $id])->toArray();
+        $note = $this->noteCollection->find(['id' => $id])->toArray();
         $note = current($note);
 
         if(empty($note)) {
-            return null;
+            throw new NoteNotFound;
         }
 
         $user = $this->userRepository->findByEmail(new Email($note['user_email']));
@@ -71,23 +71,39 @@ class NoteRepositoryMongodb implements NoteRepository
 
     public function findAllNotesFrom(Email $email, int $page = 0, int $per_page = 0): array
     {
-       return $this->noteCollection->find(["user_email" => $email->__toString()])->toArray();
+       $documents = $this->noteCollection->find(["user_email" => $email->__toString()])->toArray();
+
+       $notes = array_map(function($note) {
+            unset($note['_id']);
+            return $note;
+       }, $documents);
+
+       return $notes;
     }
 
     public function update(string $id, array $data): void
     {
-        
-    }
-
-    public function delete(string $id): void
-    {
-        $note = $this->noteCollection->find(['_id' => $id])->toArray();
+        $note = $this->noteCollection->find(['id' => $id])->toArray();
 
         if(empty($note)) {
             throw new NoteNotFound;
         }
 
-        $this->noteCollection->deleteOne(["_id" => $id]);
+        unset($data['email'], $data['id']);
+        foreach($data as $field => $value) {
+            $this->noteCollection->updateOne(["id" => $id],[ '$set' => [$field => $value]]);
+        }
+    }
+
+    public function delete(string $id): void
+    {
+        $note = $this->noteCollection->find(['id' => $id])->toArray();
+
+        if(empty($note)) {
+            throw new NoteNotFound;
+        }
+
+        $this->noteCollection->deleteOne(["id" => $id]);
     }
 
      /**
@@ -100,7 +116,7 @@ class NoteRepositoryMongodb implements NoteRepository
         $counters = $this->client->selectCollection("note_counters");
 
         $result = $counters->findOneAndUpdate(
-            ["_id", "id"],
+            ["id", "id"],
             ['$inc' => ['seq' => 1]],
             ['upsert' => true, 'projection' => [ 'seq' => 1 ],'returnDocument' => FindOneAndUpdate::RETURN_DOCUMENT_AFTER]
         );

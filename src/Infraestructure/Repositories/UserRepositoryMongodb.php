@@ -34,7 +34,7 @@ class UserRepositoryMongodb implements UserRepository
         $id = $this->getNextId();
 
         $document = [
-            "_id" => $id,
+            "id" => $id,
             "name" => $user->getName(),
             "email" => $user->getEmail()->__toString(),
             "password" => $user->getEncoder()->__toString()
@@ -58,7 +58,7 @@ class UserRepositoryMongodb implements UserRepository
 
     public function findUserById(string $id): ?User
     {
-        $findUser = $this->userCollection->find(['_id' => $id])->toArray();
+        $findUser = $this->userCollection->find(['id' => $id])->toArray();
         $findUser = current($findUser);
 
         if(empty($findUser)) {
@@ -78,7 +78,7 @@ class UserRepositoryMongodb implements UserRepository
             throw new UserNotFound;
         }
 
-        return $findUser['_id'];
+        return $findUser['id'];
     }
 
     public function getAll(): array
@@ -97,7 +97,7 @@ class UserRepositoryMongodb implements UserRepository
         $counters = $this->client->selectCollection("users_counters");
 
         $result = $counters->findOneAndUpdate(
-            ["_id", "id"],
+            ["id", "id"],
             ['$inc' => ['seq' => 1]],
             ['upsert' => true, 'projection' => [ 'seq' => 1 ],'returnDocument' => FindOneAndUpdate::RETURN_DOCUMENT_AFTER]
         );
