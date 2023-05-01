@@ -44,6 +44,10 @@ class Authentication implements Middleware
             throw new Exception("Token Expirado");
         }
 
+        if(empty($decode->payload->id)) {
+            throw new Exception("Token não identificado");
+        }
+
         $user = $this->userRepository->findUserById($decode->payload->id);
 
         if(is_null($user)) {
