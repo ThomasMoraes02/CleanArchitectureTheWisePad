@@ -1,6 +1,7 @@
 <?php 
 namespace CleanArchitecture\Infraestructure\Repositories;
 
+use CleanArchitecture\Application\Exceptions\NoteNotFound;
 use MongoDB\Client;
 use MongoDB\Database;
 use MongoDB\Collection;
@@ -80,7 +81,13 @@ class NoteRepositoryMongodb implements NoteRepository
 
     public function delete(string $id): void
     {
-        
+        $note = $this->noteCollection->find(['_id' => $id])->toArray();
+
+        if(empty($note)) {
+            throw new NoteNotFound;
+        }
+
+        $this->noteCollection->deleteOne(["_id" => $id]);
     }
 
      /**
