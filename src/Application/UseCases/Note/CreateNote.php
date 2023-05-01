@@ -59,7 +59,7 @@ class CreateNote implements UseCase
         if(!empty($userNotes)) {
             $note = array_filter($userNotes, fn($userNote) => $userNote['title'] == $title);
             if(!empty($note)) {
-                throw new DomainException("Note already exists: {$title}");
+                throw new DomainException("O titulo enviado já existe: {$title}");
             }
         }
     }
