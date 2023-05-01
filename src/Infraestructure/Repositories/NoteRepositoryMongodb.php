@@ -69,9 +69,17 @@ class NoteRepositoryMongodb implements NoteRepository
         return new Note($user, new Title($note['title']), $note['content']);
     }
 
-    public function findAllNotesFrom(Email $email, int $page = 0, int $per_page = 0): array
+    public function findAllNotesFrom(Email $email, int $page = 0, int $limit = 0): array
     {
-       $documents = $this->noteCollection->find(["user_email" => $email->__toString()])->toArray();
+        $skip = ($page - 1) * $limit;
+        $skip = ($skip < 0) ? 0 : $skip;
+
+        $options = [
+            'skip' => $skip,
+            'limit' => $limit
+        ];
+    
+       $documents = $this->noteCollection->find(["user_email" => $email->__toString()], $options)->toArray();
 
        $notes = array_map(function($note) {
             unset($note['_id']);

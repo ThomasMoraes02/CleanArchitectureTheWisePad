@@ -53,8 +53,8 @@ interface NoteRepository
      *
      * @param Email $email
      * @param integer $page
-     * @param integer $per_page
+     * @param integer $limit
      * @return array
      */
-    public function findAllNotesFrom(Email $email, int $page = 0, int $per_page = 0): array;
+    public function findAllNotesFrom(Email $email, int $page = 0, int $limit = 0): array;
 }

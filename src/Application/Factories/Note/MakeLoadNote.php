@@ -23,7 +23,14 @@ class MakeLoadNote
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $payload = json_decode($request->getBody(), true);
+        $body = json_decode($request->getBody(), true);
+        $payload['id'] = $args['id'] ?? null;
+        $payload['email'] = $body['email'] ?? "";
+        
+        $params = $request->getQueryParams();
+        $payload['page'] = $params['page'] ?? null;
+        $payload['limit'] = $params['limit'] ?? null;
+
         $responseController = $this->controller->handle($payload);
 
         $response->getBody()->write(json_encode($responseController));

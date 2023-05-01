@@ -4,6 +4,7 @@ namespace CleanArchitecture\Application\UseCases\Note;
 use CleanArchitecture\Application\UseCases\UseCase;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Note\NoteRepository;
+use Exception;
 
 class LoadNote implements UseCase
 {
@@ -22,6 +23,23 @@ class LoadNote implements UseCase
      */
     public function execute(array $request): array
     {
-        return $this->noteRepository->findAllNotesFrom(new Email($request['email']));
+        if($request['id']) {
+            $note = $this->noteRepository->findById($request['id']);
+            if($note->getUser()->getEmail() != new Email($request['email'])) {
+                throw new Exception("Nota não pertence a este usuário");
+            }
+            
+            return [
+                "id" => $request['id'],
+                "title" => $note->getTitle()->__toString(),
+                "content" => $note->getContent(),
+                "user_email" => $request['email']
+            ];
+        }
+
+        $request['page'] ??= 0;
+        $request['limit'] ??= 0;
+
+        return $this->noteRepository->findAllNotesFrom(new Email($request['email']), $request['page'], $request['limit']);
     }
 }

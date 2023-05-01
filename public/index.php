@@ -24,7 +24,7 @@ $app->post("/signup", MakeSignUp::class);
 
 $app->group("/notes", function(RouteCollectorProxy $group) {
     $group->post("", MakeCreateNote::class);
-    $group->get("", MakeLoadNote::class);
+    $group->get("[/{id}]", MakeLoadNote::class);
     $group->put("/{id}", MakeUpdateNote::class);
     $group->delete("/{id}", MakeDeleteNote::class);
 })->add(MakeAuthenticateMiddleware::class);
