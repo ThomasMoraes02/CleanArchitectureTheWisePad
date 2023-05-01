@@ -1,37 +1,40 @@
 <?php 
-namespace CleanArchitecture\Infraestructure\Repositories;
+namespace CleanArchitecture\Infraestructure\Repositories\Mongo;
 
 use CleanArchitecture\Application\Exceptions\NoteNotFound;
-use MongoDB\Client;
-use MongoDB\Database;
 use MongoDB\Collection;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Note\Note;
-use MongoDB\Operation\FindOneAndUpdate;
 use CleanArchitecture\Domain\Note\Title;
 use CleanArchitecture\Domain\Note\NoteRepository;
 use CleanArchitecture\Domain\User\UserRepository;
+use CleanArchitecture\Infraestructure\Repositories\Mongo\MongoDBConnection;
 
 class NoteRepositoryMongodb implements NoteRepository
 {
-    private Database $client;
+    private MongoDBConnection $mongoConnect;
 
     private Collection $noteCollection;
 
-    private string $collection = "notes";
-
     private UserRepository $userRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, MongoDBConnection $mongoConnect)
     {
         $this->userRepository = $userRepository;
-        $this->client = (new Client())->selectDatabase("thewisepad");
-        $this->noteCollection = $this->client->selectCollection($this->collection);
+        
+        $this->mongoConnect = $mongoConnect;
+        $this->noteCollection = $mongoConnect->getDatabase()->selectCollection("notes");
     }
 
+    /**
+     * Add Note to Repository
+     *
+     * @param Note $note
+     * @return void
+     */
     public function add(Note $note): void
     {
-        $id = $this->getNextId();
+        $id = $this->mongoConnect->getNextId("note_counters");
 
         $document = [
             "id" => $id,
@@ -43,6 +46,12 @@ class NoteRepositoryMongodb implements NoteRepository
         $this->noteCollection->insertOne($document);
     }
 
+    /**
+     * Find Note by Id
+     *
+     * @param string $id
+     * @return Note
+     */
     public function findById(string $id): Note
     {
         $note = $this->noteCollection->find(['id' => $id])->toArray();
@@ -56,6 +65,12 @@ class NoteRepositoryMongodb implements NoteRepository
         return new Note($user, new Title($note['title']), $note['content']);
     }
 
+    /**
+     * Find Note By Title
+     *
+     * @param Title $title
+     * @return Note
+     */
     public function findyByTitle(Title $title): Note
     {
         $note = $this->noteCollection->find(['title' => $title->__toString()])->toArray();
@@ -69,6 +84,14 @@ class NoteRepositoryMongodb implements NoteRepository
         return new Note($user, new Title($note['title']), $note['content']);
     }
 
+    /**
+     * Find All Notes From User Email
+     *
+     * @param Email $email
+     * @param integer $page
+     * @param integer $limit
+     * @return array
+     */
     public function findAllNotesFrom(Email $email, int $page = 0, int $limit = 0): array
     {
         $skip = ($page - 1) * $limit;
@@ -89,6 +112,13 @@ class NoteRepositoryMongodb implements NoteRepository
        return $notes;
     }
 
+    /**
+     * Update Note
+     *
+     * @param string $id
+     * @param array $data
+     * @return void
+     */
     public function update(string $id, array $data): void
     {
         $note = $this->noteCollection->find(['id' => $id])->toArray();
@@ -103,6 +133,12 @@ class NoteRepositoryMongodb implements NoteRepository
         }
     }
 
+    /**
+     * Delete Note
+     *
+     * @param string $id
+     * @return void
+     */
     public function delete(string $id): void
     {
         $note = $this->noteCollection->find(['id' => $id])->toArray();
@@ -112,23 +148,5 @@ class NoteRepositoryMongodb implements NoteRepository
         }
 
         $this->noteCollection->deleteOne(["id" => $id]);
-    }
-
-     /**
-     * Generate Next ID
-     *
-     * @return string
-     */
-    private function getNextId(): string
-    {
-        $counters = $this->client->selectCollection("note_counters");
-
-        $result = $counters->findOneAndUpdate(
-            ["id", "id"],
-            ['$inc' => ['seq' => 1]],
-            ['upsert' => true, 'projection' => [ 'seq' => 1 ],'returnDocument' => FindOneAndUpdate::RETURN_DOCUMENT_AFTER]
-        );
-        
-        return $result["seq"];
     }
 }

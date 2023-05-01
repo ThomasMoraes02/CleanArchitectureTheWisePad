@@ -1,37 +1,39 @@
 <?php 
-namespace CleanArchitecture\Infraestructure\Repositories;
+namespace CleanArchitecture\Infraestructure\Repositories\Mongo;
 
-use MongoDB\Client;
 use MongoDB\Collection;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Encoder;
 use CleanArchitecture\Domain\User\User;
-use MongoDB\Operation\FindOneAndUpdate;
 use CleanArchitecture\Domain\User\UserRepository;
 use CleanArchitecture\Application\Exceptions\UserNotFound;
-use CleanArchitecture\Infraestructure\Repositories\MongoDB\MongoDb;
-use MongoDB\Database;
+use CleanArchitecture\Infraestructure\Repositories\Mongo\MongoDBConnection;
 
 class UserRepositoryMongodb implements UserRepository
 {
-    private Database $client;
+    private MongoDBConnection $mongoConnect;
 
     private Collection $userCollection;
 
-    private string $collection = "users";
-
     private Encoder $encoder;
 
-    public function __construct(Encoder $encoder)
+    public function __construct(Encoder $encoder, MongoDBConnection $mongoConnect)
     {
         $this->encoder = $encoder;
-        $this->client = (new Client())->selectDatabase("thewisepad");
-        $this->userCollection = $this->client->selectCollection($this->collection);
+
+        $this->mongoConnect = $mongoConnect;
+        $this->userCollection = $mongoConnect->getDatabase()->selectCollection("users");
     }
 
+    /**
+     * Add User to Repository
+     *
+     * @param User $user
+     * @return void
+     */
     public function add(User $user): void
     {
-        $id = $this->getNextId();
+        $id = $this->mongoConnect->getNextId("users_counters");
 
         $document = [
             "id" => $id,
@@ -43,6 +45,12 @@ class UserRepositoryMongodb implements UserRepository
         $this->userCollection->insertOne($document);
     }
 
+    /**
+     * Find User By Email
+     *
+     * @param Email $email
+     * @return User
+     */
     public function findByEmail(Email $email): User
     {
         $findUser = $this->userCollection->find(['email' => $email->__toString()])->toArray();
@@ -56,6 +64,12 @@ class UserRepositoryMongodb implements UserRepository
         return new User($findUser->name, new Email($findUser->email), new $encoder($findUser->password));
     }
 
+    /**
+     * Find User By Id
+     *
+     * @param string $id
+     * @return User|null
+     */
     public function findUserById(string $id): ?User
     {
         $findUser = $this->userCollection->find(['id' => $id])->toArray();
@@ -69,6 +83,12 @@ class UserRepositoryMongodb implements UserRepository
         return new User($findUser['name'], new Email($findUser['email']), new $encoder($findUser['password']));
     }
 
+    /**
+     * Get User By ID
+     *
+     * @param User $user
+     * @return string
+     */
     public function getUserId(User $user): string
     {
         $findUser = $this->userCollection->find(['email' => $user->getEmail()->__toString()])->toArray();
@@ -81,27 +101,14 @@ class UserRepositoryMongodb implements UserRepository
         return $findUser['id'];
     }
 
+    /**
+     * Get All Users
+     *
+     * @return array
+     */
     public function getAll(): array
     {
         $users = $this->userCollection->find()->toArray();
         return $users;
-    }
-
-    /**
-     * Generate Next ID
-     *
-     * @return string
-     */
-    private function getNextId(): string
-    {
-        $counters = $this->client->selectCollection("users_counters");
-
-        $result = $counters->findOneAndUpdate(
-            ["id", "id"],
-            ['$inc' => ['seq' => 1]],
-            ['upsert' => true, 'projection' => [ 'seq' => 1 ],'returnDocument' => FindOneAndUpdate::RETURN_DOCUMENT_AFTER]
-        );
-        
-        return $result["seq"];
     }
 }
