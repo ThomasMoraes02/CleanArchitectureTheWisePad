@@ -2,12 +2,12 @@
 namespace CleanArchitecture\Application\UseCases\Note;
 
 use Exception;
-use DomainException;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Note\Note;
 use CleanArchitecture\Domain\Note\NoteRepository;
 use CleanArchitecture\Domain\User\UserRepository;
 use CleanArchitecture\Application\UseCases\UseCase;
+use CleanArchitecture\Application\Exceptions\PermissionRefused;
 
 class UpdateNote implements UseCase
 {
@@ -33,19 +33,19 @@ class UpdateNote implements UseCase
         $user = $this->userRepository->findByEmail(new Email($request['email']));
 
         if($userAuth->getEmail() != $user->getEmail()) {
-            throw new Exception("Permissão negada a este recurso");
+            throw new PermissionRefused();
         }
 
         $note = $this->noteRepository->findById($request['id']);
 
         if($user->getEmail() != $note->getUser()->getEmail()) {
-            throw new DomainException("Essa nota não pertence a este usuário.");
+            throw new Exception("Essa nota não pertence a este usuário.");
         }
 
         $noteAlreadyExists = $this->verifyTitleAlreadyExists($note, $request['title']);
         if(!empty($request['title']) && !is_null($noteAlreadyExists)) {
             if($request['id'] != $noteAlreadyExists) {
-                throw new DomainException("Titulo já existe: {$request['title']}");
+                throw new Exception("Titulo já existe: {$request['title']}");
             }
         }
 

@@ -1,6 +1,7 @@
 <?php 
 namespace CleanArchitecture\Application\UseCases\Note;
 
+use CleanArchitecture\Application\Exceptions\PermissionRefused;
 use DomainException;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Note\Note;
@@ -8,7 +9,6 @@ use CleanArchitecture\Domain\Note\Title;
 use CleanArchitecture\Domain\Note\NoteRepository;
 use CleanArchitecture\Domain\User\UserRepository;
 use CleanArchitecture\Application\UseCases\UseCase;
-use Exception;
 
 class CreateNote implements UseCase
 {
@@ -34,7 +34,7 @@ class CreateNote implements UseCase
         $user = $this->userRepository->findByEmail(new Email($request['email']));
 
         if($userAuth->getEmail() != $user->getEmail()) {
-            throw new Exception("Permissão negada a este recurso");
+            throw new PermissionRefused();
         }
 
         $note = new Note($user, new Title($request['title']), $request['content']);

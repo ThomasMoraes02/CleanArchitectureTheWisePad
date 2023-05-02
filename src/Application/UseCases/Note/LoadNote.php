@@ -1,11 +1,12 @@
 <?php 
 namespace CleanArchitecture\Application\UseCases\Note;
 
-use CleanArchitecture\Application\UseCases\UseCase;
+use Exception;
 use CleanArchitecture\Domain\Email;
 use CleanArchitecture\Domain\Note\NoteRepository;
 use CleanArchitecture\Domain\User\UserRepository;
-use Exception;
+use CleanArchitecture\Application\UseCases\UseCase;
+use CleanArchitecture\Application\Exceptions\PermissionRefused;
 
 class LoadNote implements UseCase
 {
@@ -31,7 +32,7 @@ class LoadNote implements UseCase
         $userRequest = $this->userRepository->findByEmail(new Email($request['email']));
 
         if($userAuth->getEmail() != $userRequest->getEmail()) {
-            throw new Exception("Permissão negada a este recurso.");
+            throw new PermissionRefused();
         }
 
         if($request['id']) {

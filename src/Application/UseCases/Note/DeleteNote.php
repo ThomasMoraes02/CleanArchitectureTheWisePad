@@ -1,10 +1,10 @@
 <?php 
 namespace CleanArchitecture\Application\UseCases\Note;
 
-use CleanArchitecture\Application\UseCases\UseCase;
 use CleanArchitecture\Domain\Note\NoteRepository;
 use CleanArchitecture\Domain\User\UserRepository;
-use Exception;
+use CleanArchitecture\Application\UseCases\UseCase;
+use CleanArchitecture\Application\Exceptions\PermissionRefused;
 
 class DeleteNote implements UseCase
 {
@@ -31,7 +31,7 @@ class DeleteNote implements UseCase
         $user = $this->userRepository->findUserById($request['user_id']);
 
         if($note->getUser()->getEmail() != $user->getEmail()) {
-            throw new Exception("Você não tem permissão para excluir esta nota");
+            throw new PermissionRefused();
         }
 
         $this->noteRepository->delete($request['id']);
