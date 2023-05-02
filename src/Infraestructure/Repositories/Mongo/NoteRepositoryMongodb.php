@@ -127,7 +127,7 @@ class NoteRepositoryMongodb implements NoteRepository
             throw new NoteNotFound;
         }
 
-        unset($data['email'], $data['id']);
+        unset($data['email'], $data['id'], $data['user_id']);
         foreach($data as $field => $value) {
             $this->noteCollection->updateOne(["id" => $id],[ '$set' => [$field => $value]]);
         }
