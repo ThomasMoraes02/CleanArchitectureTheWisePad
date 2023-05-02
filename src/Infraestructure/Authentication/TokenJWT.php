@@ -19,7 +19,6 @@ class TokenJWT implements TokenManager
         $expires = time() + 60 * 60 * 24 * AUTH_EXPIRATION_TOKEN;
         
         $payloadJWT = [
-            "iss" => AUTH_SECRET_KEY,
             "exp" => $expires,
             "payload" => $payload,
             "role" => "user"
